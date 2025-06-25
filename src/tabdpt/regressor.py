@@ -1,17 +1,31 @@
 import math
-import torch
+
 import numpy as np
+import torch
 from sklearn.base import RegressorMixin
 from tqdm import tqdm
 
 from .estimator import TabDPTEstimator
-from .utils import pad_x, generate_random_permutation
+from .utils import generate_random_permutation, pad_x
 
 
 class TabDPTRegressor(TabDPTEstimator, RegressorMixin):
-    def __init__(self, path: str = TabDPTEstimator._DEFAULT_CHECKPOINT_PATH, inf_batch_size: int = 512,
-                 device: str = TabDPTEstimator._DEFAULT_DEVICE, use_flash: bool = True, compile: bool = True):
-        super().__init__(mode="reg", path=path, inf_batch_size=inf_batch_size, device=device, use_flash=use_flash, compile=compile)
+    def __init__(
+        self,
+        path: str = None,
+        inf_batch_size: int = 512,
+        device: str = None,
+        use_flash: bool = True,
+        compile: bool = True,
+    ):
+        super().__init__(
+            mode="reg",
+            path=path,
+            inf_batch_size=inf_batch_size,
+            device=device,
+            use_flash=use_flash,
+            compile=compile,
+        )
 
     @torch.no_grad()
     def _predict(self, X: np.ndarray, context_size: int = 128, seed=None):
@@ -39,9 +53,7 @@ class TabDPTRegressor(TabDPTEstimator, RegressorMixin):
                 start = b * self.inf_batch_size
                 end = min(len(self.X_test), (b + 1) * self.inf_batch_size)
 
-                indices_nni = self.faiss_knn.get_knn_indices(
-                    self.X_test[start:end], k=context_size
-                )
+                indices_nni = self.faiss_knn.get_knn_indices(self.X_test[start:end], k=context_size)
                 X_nni = train_x[torch.tensor(indices_nni)]
                 y_nni = train_y[torch.tensor(indices_nni)]
 

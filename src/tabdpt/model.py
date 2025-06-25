@@ -3,9 +3,9 @@ from typing import Literal
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
-from torch.nn import Linear, LayerNorm, GELU
+from torch.nn import GELU, LayerNorm, Linear
 
-from .utils import normalize_data, clip_outliers, flash_context
+from .utils import clip_outliers, flash_context, normalize_data
 
 
 class TabDPTModel(nn.Module):
@@ -47,7 +47,6 @@ class TabDPTModel(nn.Module):
         y_src: torch.Tensor,
         task: Literal["cls", "reg"],  # classification or regression
     ) -> torch.Tensor:
-
         x_src = x_src.transpose(0, 1)
         y_src = y_src.squeeze(-1).transpose(0, 1)
         eval_pos = y_src.shape[0]
@@ -72,9 +71,9 @@ class TabDPTModel(nn.Module):
         for layer in self.transformer_encoder:
             src = layer(src, eval_pos)
         pred = self.head(src)
-        if task == 'reg':
+        if task == "reg":
             pred = pred[eval_pos:, ..., -1]
-        elif task == 'cls':
+        elif task == "cls":
             pred = pred[eval_pos:, ..., :-1]
         else:
             raise ValueError(f"Invalid task: {task}")
@@ -98,26 +97,12 @@ class TabDPTModel(nn.Module):
             use_flash=use_flash,
         )
 
-        module_prefix = "_orig_mod."
-        model_state = {k.replace(module_prefix, ""): v for k, v in model_state.items()}
+        model_state = {k.replace("_orig_mod.", ""): v for k, v in model_state.items()}
+        model_state = {k.replace("model.", ""): v for k, v in model_state.items()}
         model.load_state_dict(model_state)
         model.to(config.env.device)
         model.eval()
         return model
-
-
-class RMSNorm(torch.nn.Module):
-    def __init__(self, dim: int, eps: float = 1e-6):
-        super().__init__()
-        self.eps = eps
-        self.weight = nn.Parameter(torch.ones(dim))
-
-    def _norm(self, x):
-        return x * torch.rsqrt(x.pow(2).mean(-1, keepdim=True) + self.eps)
-
-    def forward(self, x):
-        output = self._norm(x.float()).type_as(x)
-        return output * self.weight
 
 
 class TransformerEncoderLayer(nn.Module):
@@ -130,8 +115,6 @@ class TransformerEncoderLayer(nn.Module):
         self.q_proj = nn.Linear(embed_dim, embed_dim, bias=False)
         self.out_proj = nn.Linear(embed_dim, embed_dim, bias=False)
 
-        # LayerNorm might be faster if not using compile because it has fused kernels
-        # while RMSNorm doesn't
         self.attn_norm = LayerNorm(embed_dim)
         self.ff_norm = LayerNorm(embed_dim)
         self.ff = nn.Sequential(Linear(embed_dim, ff_dim), GELU(), Linear(ff_dim, embed_dim))

@@ -1,9 +1,10 @@
 import os
 import random
 from functools import wraps
+
+import faiss
 import numpy as np
 import torch
-import faiss
 from torch.nn.attention import SDPBackend, sdpa_kernel
 
 
@@ -15,15 +16,6 @@ def generate_random_permutation(N, seed=None):
     return torch.randperm(N, generator=generator)
 
 
-def download_model():
-    temp_dir = "/tmp/tabdpt_model"
-    model_path = os.path.join(temp_dir, "tabdpt1_1.pth")
-    if not os.path.exists(os.path.join(temp_dir, model_path)):
-        os.makedirs(temp_dir, exist_ok=True)
-        os.system(f"gdown --id 1ARFl7uQ6bwcpP9lTPqDv1_G0M3VDW3mI -O {model_path}")
-    return model_path
-
-
 def flash_context(func):
     @wraps(func)
     def wrapper(self, *args, **kwargs):
@@ -31,10 +23,14 @@ def flash_context(func):
             assert torch.cuda.is_available(), "FlashAttention requires CUDA support"
             bf_support = torch.cuda.get_device_capability()[0] >= 8
             dtype = torch.bfloat16 if bf_support else torch.float16
-            with torch.autocast(device_type='cuda', dtype=dtype), sdpa_kernel(SDPBackend.FLASH_ATTENTION):
+            with (
+                torch.autocast(device_type="cuda", dtype=dtype),
+                sdpa_kernel(SDPBackend.FLASH_ATTENTION),
+            ):
                 return func(self, *args, **kwargs)
         else:
             return func(self, *args, **kwargs)
+
     return wrapper
 
 
