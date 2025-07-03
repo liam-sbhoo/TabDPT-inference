@@ -13,7 +13,6 @@ from .utils import generate_random_permutation, pad_x
 class TabDPTClassifier(TabDPTEstimator, ClassifierMixin):
     def __init__(
         self,
-        path: str = None,
         inf_batch_size: int = 512,
         device: str = None,
         use_flash: bool = True,
@@ -21,7 +20,6 @@ class TabDPTClassifier(TabDPTEstimator, ClassifierMixin):
     ):
         super().__init__(
             mode="cls",
-            path=path,
             inf_batch_size=inf_batch_size,
             device=device,
             use_flash=use_flash,
@@ -90,7 +88,7 @@ class TabDPTClassifier(TabDPTEstimator, ClassifierMixin):
             else:
                 pred = self._predict_large_cls(X_train, X_test, y_train)
 
-            pred = pred[..., :self.num_classes] / temperature
+            pred = pred[..., : self.num_classes] / temperature
             pred = torch.nn.functional.softmax(pred.float(), dim=-1)
             pred_val = pred.squeeze().detach().cpu().numpy()
         else:
@@ -121,7 +119,7 @@ class TabDPTClassifier(TabDPTEstimator, ClassifierMixin):
 
                 pred = pred.float()
                 if not return_logits:
-                    pred = pred[..., :self.num_classes] / temperature
+                    pred = pred[..., : self.num_classes] / temperature
                     pred = torch.nn.functional.softmax(pred, dim=-1)
                     pred /= pred.sum(axis=-1, keepdims=True)  # numerical stability
 
@@ -141,7 +139,7 @@ class TabDPTClassifier(TabDPTEstimator, ClassifierMixin):
             else:
                 logits_cumsum += logits
 
-        pred = (logits_cumsum / n_ensembles)[..., :self.num_classes] / temperature
+        pred = (logits_cumsum / n_ensembles)[..., : self.num_classes] / temperature
         pred = softmax(pred, axis=-1)
         pred /= pred.sum(axis=-1, keepdims=True)  # numerical stability
         return pred
