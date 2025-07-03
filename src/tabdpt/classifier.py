@@ -1,18 +1,32 @@
-import numpy as np
-from tqdm import tqdm
-from scipy.special import softmax
-import torch
 import math
+
+import numpy as np
+import torch
+from scipy.special import softmax
 from sklearn.base import ClassifierMixin
+from tqdm import tqdm
 
 from .estimator import TabDPTEstimator
-from .utils import pad_x, generate_random_permutation
+from .utils import generate_random_permutation, pad_x
 
 
 class TabDPTClassifier(TabDPTEstimator, ClassifierMixin):
-    def __init__(self, path: str = TabDPTEstimator._DEFAULT_CHECKPOINT_PATH, inf_batch_size: int = 512,
-                 device: str = TabDPTEstimator._DEFAULT_DEVICE, use_flash: bool = True, compile: bool = True):
-        super().__init__(mode="cls", path=path, inf_batch_size=inf_batch_size, device=device, use_flash=use_flash, compile=compile)
+    def __init__(
+        self,
+        path: str = None,
+        inf_batch_size: int = 512,
+        device: str = None,
+        use_flash: bool = True,
+        compile: bool = True,
+    ):
+        super().__init__(
+            mode="cls",
+            path=path,
+            inf_batch_size=inf_batch_size,
+            device=device,
+            use_flash=use_flash,
+            compile=compile,
+        )
 
     def fit(self, X, y):
         super().fit(X, y)
@@ -24,7 +38,7 @@ class TabDPTClassifier(TabDPTEstimator, ClassifierMixin):
 
         digit_preds = []
         for i in range(num_digits):
-            y_train_digit = (y_train // (self.max_num_classes ** i)) % self.max_num_classes
+            y_train_digit = (y_train // (self.max_num_classes**i)) % self.max_num_classes
             pred = self.model(
                 x_src=torch.cat([X_train, X_test], dim=1),
                 y_src=y_train_digit.unsqueeze(-1),
@@ -32,18 +46,29 @@ class TabDPTClassifier(TabDPTEstimator, ClassifierMixin):
             )
             digit_preds.append(pred.float())
 
-        full_pred = torch.zeros((X_test.shape[0], X_test.shape[1], self.num_classes), device=X_train.device)
+        full_pred = torch.zeros(
+            (X_test.shape[0], X_test.shape[1], self.num_classes), device=X_train.device
+        )
         for class_idx in range(self.num_classes):
             class_pred = torch.zeros_like(digit_preds[0][:, :, 0])
             for digit_idx, digit_pred in enumerate(digit_preds):
-                digit_value = (class_idx // (self.max_num_classes ** digit_idx)) % self.max_num_classes
+                digit_value = (
+                    class_idx // (self.max_num_classes**digit_idx)
+                ) % self.max_num_classes
                 class_pred += digit_pred[:, :, digit_value]
             full_pred[:, :, class_idx] = class_pred.transpose(0, 1)
 
         return full_pred
 
     @torch.no_grad()
-    def predict_proba(self, X: np.ndarray, temperature: float = 0.8, context_size: int = 128, return_logits: bool = False, seed: int = None):
+    def predict_proba(
+        self,
+        X: np.ndarray,
+        temperature: float = 0.8,
+        context_size: int = 128,
+        return_logits: bool = False,
+        seed: int = None,
+    ):
         train_x, train_y, test_x = self._prepare_prediction(X)
 
         if seed is not None:
@@ -74,9 +99,7 @@ class TabDPTClassifier(TabDPTEstimator, ClassifierMixin):
                 start = b * self.inf_batch_size
                 end = min(len(self.X_test), (b + 1) * self.inf_batch_size)
 
-                indices_nni = self.faiss_knn.get_knn_indices(
-                    self.X_test[start:end], k=context_size
-                )
+                indices_nni = self.faiss_knn.get_knn_indices(self.X_test[start:end], k=context_size)
                 X_nni = train_x[torch.tensor(indices_nni)]
                 y_nni = train_y[torch.tensor(indices_nni)]
 
@@ -106,7 +129,9 @@ class TabDPTClassifier(TabDPTEstimator, ClassifierMixin):
             pred_val = torch.cat(pred_list, dim=0).squeeze().detach().cpu().float().numpy()
         return pred_val
 
-    def ensemble_predict_proba(self, X, n_ensembles: int, temperature: float = 0.8, context_size: int = 128):
+    def ensemble_predict_proba(
+        self, X, n_ensembles: int, temperature: float = 0.8, context_size: int = 128
+    ):
         logits_cumsum = None
         for i in tqdm(range(n_ensembles)):
             seed = int(np.random.SeedSequence().generate_state(1)[0])
@@ -121,8 +146,22 @@ class TabDPTClassifier(TabDPTEstimator, ClassifierMixin):
         pred /= pred.sum(axis=-1, keepdims=True)  # numerical stability
         return pred
 
-    def predict(self, X, n_ensembles: int = 1, temperature: float = 0.8, context_size: int = 128, seed: int = None):
+    def predict(
+        self,
+        X,
+        n_ensembles: int = 1,
+        temperature: float = 0.8,
+        context_size: int = 128,
+        seed: int = None,
+    ):
         if n_ensembles == 1:
-            return self.predict_proba(X, temperature=temperature, context_size=context_size, seed=seed).argmax(axis=-1)
+            return self.predict_proba(
+                X, temperature=temperature, context_size=context_size, seed=seed
+            ).argmax(axis=-1)
         else:
-            return self.ensemble_predict_proba(X, n_ensembles=n_ensembles, temperature=temperature, context_size=context_size).argmax(axis=-1)
+            return self.ensemble_predict_proba(
+                X,
+                n_ensembles=n_ensembles,
+                temperature=temperature,
+                context_size=context_size,
+            ).argmax(axis=-1)

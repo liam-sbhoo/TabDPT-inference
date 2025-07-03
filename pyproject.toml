@@ -1,21 +1,19 @@
-[tool.poetry]
+[project]
 name = "tabdpt"
 version = "1.1.0"
 description = "TabDPT"
-authors = ["Jeremy", "Valentin"]
-license = "MIT"
-
-[tool.poetry.dependencies]
-python = "^3.9"
-torch = "*"
-numpy = "*"
-scikit-learn = "*"
-faiss-cpu = "*"
-gdown = "*"
-tqdm = "*"
-scipy = "*"
-omegaconf = "*"
-
-[build-system]
-requires = ["poetry-core>=1.0.0"]
-build-backend = "poetry.core.masonry.api"
+readme = "README.md"
+license = "Apache-2.0"
+requires-python = ">=3.11"
+dependencies = [
+    "appdirs>=1.4.4",
+    "faiss-cpu==1.11.0",
+    "gdown==5.2.0",
+    "numpy==2.3.0",
+    "omegaconf==2.3.0",
+    "safetensors>=0.5.3",
+    "scikit-learn==1.7.0",
+    "scipy==1.15.3",
+    "torch==2.7.1",
+    "tqdm==4.67.1",
+]
