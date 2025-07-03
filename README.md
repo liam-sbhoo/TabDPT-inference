@@ -15,7 +15,7 @@ For better performance, please increase `context_size` or increase `n_ensembles`
 
 
 ### Update July 2025: HuggingFace and safetensors
-The default format is not safetensors and the model is uploaded to HuiggingFace.
+The default format is now safetensors and the model is uploaded to HuggingFace.
 
 ### Update April 2025: New Model
 **Version 1.1 is now available.** We have improved the prediction performance of TabDPT through increased training stability.
