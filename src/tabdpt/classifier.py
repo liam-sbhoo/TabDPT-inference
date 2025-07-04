@@ -13,7 +13,6 @@ from .utils import generate_random_permutation, pad_x
 class TabDPTClassifier(TabDPTEstimator, ClassifierMixin):
     def __init__(
         self,
-        path: str = None,
         inf_batch_size: int = 512,
         device: str = None,
         use_flash: bool = True,
@@ -21,7 +20,6 @@ class TabDPTClassifier(TabDPTEstimator, ClassifierMixin):
     ):
         super().__init__(
             mode="cls",
-            path=path,
             inf_batch_size=inf_batch_size,
             device=device,
             use_flash=use_flash,

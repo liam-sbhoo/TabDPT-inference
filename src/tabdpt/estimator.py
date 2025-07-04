@@ -1,12 +1,9 @@
 import json
-import logging
-import os
 from pathlib import Path
 
-import gdown
 import numpy as np
 import torch
-from appdirs import user_cache_dir
+from huggingface_hub import hf_hub_download
 from omegaconf import OmegaConf
 from safetensors import safe_open
 from safetensors.torch import save_file
@@ -19,48 +16,14 @@ from .model import TabDPTModel
 from .utils import FAISS, convert_to_torch_tensor
 
 # Constants for model caching and download
-_MODEL_NAME = "tabdpt1_1.safetensors"
-_CACHE_BASE = Path(user_cache_dir("tabdpt", "Layer6"))
-_CACHE_BASE.mkdir(parents=True, exist_ok=True)
-_GDRIVE_FILE_ID = "1ARFl7uQ6bwcpP9lTPqDv1_G0M3VDW3mI"
-logger = logging.getLogger(__name__)
-
-
-def _get_checkpoint(path: str | None = None) -> Path:
-    """
-    Resolve the safetensors checkpoint file:
-    1. If `path` is provided, return it directly.
-    2. Otherwise, look in the user cache dir and download via gdown if missing.
-    """
-    if path:
-        return Path(path)
-    safetensors_path = _CACHE_BASE / _MODEL_NAME
-    if safetensors_path.exists():
-        return safetensors_path
-    pth_path = _CACHE_BASE / "tmp.pth"
-    if not os.path.exists(pth_path):
-        logger.info(f"Downloading checkpoint from Google Drive to {pth_path}")
-        url = f"https://drive.google.com/uc?id={_GDRIVE_FILE_ID}"
-        gdown.download(url, str(pth_path), quiet=False)
-
-    checkpoint = torch.load(pth_path, map_location="cpu", weights_only=False)
-    model_state = checkpoint["model"]
-    cfg = checkpoint["cfg"]
-    cfg_dict = OmegaConf.to_container(cfg, resolve=True)
-    cfg_json = json.dumps(cfg_dict)
-    metadata = {"cfg": cfg_json}
-    save_file(model_state, safetensors_path, metadata=metadata)
-    logger.info(f"Successfully converted {pth_path} to {safetensors_path}")
-    # Remove the pth file after conversion
-    pth_path.unlink()
-    return safetensors_path
+_VERSION = "1_1"
+_MODEL_NAME = f"tabdpt{_VERSION}.safetensors"
 
 
 class TabDPTEstimator(BaseEstimator):
     def __init__(
         self,
         mode: str,
-        path: str = None,
         inf_batch_size: int = 512,
         device: str = None,
         use_flash: bool = True,
@@ -70,7 +33,11 @@ class TabDPTEstimator(BaseEstimator):
         self.inf_batch_size = inf_batch_size
         self.device = device or ("cuda" if torch.cuda.is_available() else "cpu")
         self.use_flash = use_flash
-        self.path = _get_checkpoint(path)
+
+        self.path = hf_hub_download(
+            repo_id="Layer6/TabDPT",
+            filename=_MODEL_NAME,
+        )
 
         with safe_open(self.path, framework="pt", device=self.device) as f:
             meta = f.metadata()
