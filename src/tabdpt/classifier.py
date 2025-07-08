@@ -63,7 +63,7 @@ class TabDPTClassifier(TabDPTEstimator, ClassifierMixin):
         self,
         X: np.ndarray,
         temperature: float = 0.8,
-        context_size: int = 128,
+        context_size: int = 1024,
         return_logits: bool = False,
         seed: int = None,
     ):
@@ -128,7 +128,7 @@ class TabDPTClassifier(TabDPTEstimator, ClassifierMixin):
         return pred_val
 
     def ensemble_predict_proba(
-        self, X, n_ensembles: int, temperature: float = 0.8, context_size: int = 128
+        self, X, n_ensembles: int = 8, temperature: float = 0.8, context_size: int = 1024
     ):
         logits_cumsum = None
         for i in tqdm(range(n_ensembles)):
@@ -147,9 +147,9 @@ class TabDPTClassifier(TabDPTEstimator, ClassifierMixin):
     def predict(
         self,
         X,
-        n_ensembles: int = 1,
+        n_ensembles: int = 8,
         temperature: float = 0.8,
-        context_size: int = 128,
+        context_size: int = 1024,
         seed: int = None,
     ):
         if n_ensembles == 1:

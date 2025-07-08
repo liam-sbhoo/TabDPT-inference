@@ -26,7 +26,7 @@ class TabDPTRegressor(TabDPTEstimator, RegressorMixin):
         )
 
     @torch.no_grad()
-    def _predict(self, X: np.ndarray, context_size: int = 128, seed=None):
+    def _predict(self, X: np.ndarray, context_size: int = 1024, seed=None):
         train_x, train_y, test_x = self._prepare_prediction(X)
 
         if seed is not None:
@@ -71,7 +71,7 @@ class TabDPTRegressor(TabDPTEstimator, RegressorMixin):
 
             return torch.cat(pred_list).squeeze().detach().cpu().float().numpy()
 
-    def _ensemble_predict(self, X: np.ndarray, n_ensembles: int, context_size: int = 128):
+    def _ensemble_predict(self, X: np.ndarray, n_ensembles: int = 8, context_size: int = 1024):
         logits_cumsum = None
         for i in tqdm(range(n_ensembles)):
             seed = int(np.random.SeedSequence().generate_state(1)[0])
@@ -82,7 +82,7 @@ class TabDPTRegressor(TabDPTEstimator, RegressorMixin):
                 logits_cumsum += logits
         return logits_cumsum / n_ensembles
 
-    def predict(self, X: np.ndarray, n_ensembles: int = 1, context_size: int = 128, seed=None):
+    def predict(self, X: np.ndarray, n_ensembles: int = 8, context_size: int = 1024, seed=None):
         if n_ensembles == 1:
             return self._predict(X, context_size=context_size, seed=seed)
         else:
