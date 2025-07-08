@@ -1,41 +1,175 @@
-# TabDPT: Scaling Tabular Foundation Models
+<div align="center">
 
-## Installation
+# TabDPT: Scaling Tabular Foundation Models on Real Data
+
+[![arxiv](https://img.shields.io/static/v1?label=arXiv&message=2410.18164&color=B31B1B&logo=arXiv)](https://arxiv.org/abs/2410.18164)
+[![huggingface](https://img.shields.io/badge/%F0%9F%A4%97%20Hugging%20Face-Model-FFD21E)](https://huggingface.co/Layer6/TabDPT)
+
+</div>
+
+**TabDPT** is an open-source foundation model for tabular data based on in-context learning. It is trained on real-world data and can generalize to new tasks **without** additional training or hyperparameter tuning.
+
+This repository provides a lightweight interface to generate predictions on incoming tabular datasets. Full training code is available [here](TODO).
+
+## Usage
+
+### Installation
+
+TabDPT is available on [Hugging Face](https://huggingface.co/Layer6/TabDPT).
+
+To set up this repo,
 ```
 git clone git@github.com:layer6ai-labs/TabDPT.git
 cd TabDPT
 pip install -e .
 ```
 
-## Example Usage 
-Please take a look at `tests/cls_example.py` and `tests/reg_example.py`
-For better performance, please increase `context_size` or increase `n_ensembles` to trade off speed and accuracy
+### Worked Examples
 
-## Updates
+See `tests/cls_example.py` and `tests/reg_example.py` for examples of how to use TabDPT once installed.
 
+For better performance, please increase `context_size` or increase `n_ensembles` to trade off speed and accuracy.
 
-### Update July 2025: HuggingFace and safetensors
-The default format is now safetensors and the model is uploaded to HuggingFace.
+## Overview
 
-### Update April 2025: New Model
-**Version 1.1 is now available.** We have improved the prediction performance of TabDPT through increased training stability.
+TabDPT uses retrieval and self-supervised learning to remove constraints on dataset size and to enable effective generalization from training on real data. We find that this approach outperforms existing open-source ICL training approaches, along with other deep learning and tree-based models:
 
-Weights are now stored on Git LFS, at the path `checkpoints/tabdpt1_1.pth`, in addition to Google drive.
-Please do `git lfs pull` in order to get the latest weights inside `checkpoints` folder.
+<table align="center">
+	<colgroup>
+		<col />
+		<col />
+		<col />
+		<col />
+		<col />
+	</colgroup>
+	<thead>
+		<tr class="header">
+			<td style="text-align: center;" rowspan=2><strong>Algorithm</strong></th>
+			<th style="text-align: center;" colspan=2><strong>CC18</strong></th>
+			<th style="text-align: center;" colspan=2><strong>CTR23</strong></th>
+		</tr>
+		<tr class="header">
+			<th style="text-align: center;"><strong>AUC</strong></th>
+			<th style="text-align: center;"><strong>Accuracy</strong></th>
+			<th style="text-align: center;"><strong>Correlation</strong></th>
+			<th style="text-align: center;"><strong><span class="math inline"><em>R</em><sup>2</sup></span></strong></th>
+		</tr>
+	</thead>
+	<tbody>
+		<tr class="odd">
+			<td style="text-align: center;"><strong>TabDPT v1.1</strong></td>
+			<td><strong>0.976 <sub><sup>[0.974, 0.978]</sup></sub></strong></td>
+			<td><strong>0.928 <sub><sup>[0.926, 0.931]</sup></sub></strong></td>
+			<td><strong>0.920 <sub><sup>[0.918, 0.922]</sup></sub></strong></td>
+			<td><strong>0.847 <sub><sup>[0.843, 0.851]</sup></sub></strong></td>
+		</tr>
+		<tr class="even">
+			<td style="text-align: center;">TabDPT v1.0</td>
+			<td>0.972 <sub><sup>[0.971, 0.973]</sup></sub></td>
+			<td>0.917 <sub><sup>[0.915, 0.919]</sup></sub></td>
+			<td>0.911 <sub><sup>[0.908, 0.913]</sup></sub></td>
+			<td>0.831 <sub><sup>[0.826, 0.835]</sup></sub></td>
+		</tr>
+		<tr class="odd">
+			<td style="text-align: center;">TabPFN v2</td>
+			<td>0.972 <sub><sup>[0.970, 0.974]</sup></sub></td>
+			<td>0.917 <sub><sup>[0.915, 0.919]</sup></sub></td>
+			<td>0.917 <sub><sup>[0.911, 0.921]</sup></sub></td>
+			<td>0.841 <sub><sup>[0.831, 0.848]</sup></sub></td>
+		</tr>
+		<tr class="even">
+			<td style="text-align: center;">TabPFN (kNN)</td>
+			<td>0.959 <sub><sup>[0.956, 0.962]</sup></sub></td>
+			<td>0.884 <sub><sup>[0.881, 0.887]</sup></sub></td>
+			<td style="text-align: center;">N/A</td>
+			<td style="text-align: center;">N/A</td>
+		</tr>
+		<tr class="odd">
+			<td style="text-align: center;">TabPFN</td>
+			<td>0.939 <sub><sup>[0.935, 0.943]</sup></sub></td>
+			<td>0.852 <sub><sup>[0.849, 0.856]</sup></sub></td>
+			<td style="text-align: center;">N/A</td>
+			<td style="text-align: center;">N/A</td>
+		</tr>
+		<tr class="even">
+			<td style="text-align: center;">TabR</td>
+			<td>0.967 <sub><sup>[0.965, 0.969]</sup></sub></td>
+			<td>0.923 <sub><sup>[0.920, 0.926]</sup></sub></td>
+			<td>0.909 <sub><sup>[0.905, 0.912]</sup></sub></td>
+			<td>0.825 <sub><sup>[0.817, 0.831]</sup></sub></td>
+		</tr>
+		<tr class="odd">
+			<td style="text-align: center;">MLP-PLR</td>
+			<td>0.967 <sub><sup>[0.965, 0.968]</sup></sub></td>
+			<td>0.914 <sub><sup>[0.911, 0.917]</sup></sub></td>
+			<td>0.907 <sub><sup>[0.904, 0.910]</sup></sub></td>
+			<td>0.827 <sub><sup>[0.822, 0.832]</sup></sub></td>
+		</tr>
+		<tr class="even">
+			<td style="text-align: center;">MLP</td>
+			<td>0.915 <sub><sup>[0.909, 0.920]</sup></sub></td>
+			<td>0.865 <sub><sup>[0.860, 0.870]</sup></sub></td>
+			<td style="text-align: center;">N/A</td>
+			<td style="text-align: center;">N/A</td>
+		</tr>
+		<tr class="odd">
+			<td style="text-align: center;">XGBoost</td>
+			<td>0.965 <sub><sup>[0.963, 0.967]</sup></sub></td>
+			<td>0.910 <sub><sup>[0.906, 0.913]</sup></sub></td>
+			<td>0.904 <sub><sup>[0.900, 0.907]</sup></sub></td>
+			<td>0.820 <sub><sup>[0.814, 0.825]</sup></sub></td>
+		</tr>
+		<tr class="even">
+			<td style="text-align: center;">LightGBM</td>
+			<td>0.964 <sub><sup>[0.962, 0.967]</sup></sub></td>
+			<td>0.906 <sub><sup>[0.902, 0.909]</sup></sub></td>
+			<td>0.900 <sub><sup>[0.896, 0.904]</sup></sub></td>
+			<td>0.809 <sub><sup>[0.803, 0.815]</sup></sub></td>
+		</tr>
+		<tr class="odd">
+			<td style="text-align: center;">CatBoost</td>
+			<td>0.964 <sub><sup>[0.962, 0.967]</sup></sub></td>
+			<td>0.908 <sub><sup>[0.905, 0.910]</sup></sub></td>
+			<td>0.897 <sub><sup>[0.890, 0.903]</sup></sub></td>
+			<td>0.802 <sub><sup>[0.794, 0.810]</sup></sub></td>
+		</tr>
+	</tbody>
+</table>
+<p align="center">
+	Table 1: Model performance comparison on the standard <a href="https://new.openml.org/search?type=study&study_type=task&id=99">CC18</a> and <a href="https://www.openml.org/search?type=study&study_type=task&id=353">CTR23</a> benchmarks, with 95% confidence intervals.
+</p>
 
-### Update December 2024: Faster Inference
-Added support for flash attention (with bf16 precision) and compile flag. Both are enabled to True by default and should lead to a significant speed-up.
+TabDPT is trained on real-world tabular data and we observe scaling laws similar to LLMs, opening the door to training Internet-scale tabular foundation models:
+
+<p align="center">
+<img
+src="figures/scaling.png" width="50%">
+<br />
+<span>
+Figure 1: Increasing model or pre-training data size (number of cells) leads to consistent improvements predictable by power laws (fitted solid lines).
+</span>
+</p>
+
+TabDPT also stands out in head-to-head model comparisons and is much faster to use than other models in total time taken to generate a prediction:
+
+<p align="center">
+<img
+src="figures/performance-comparison.png" width="100%">
+<br />
+<span>
+Figure 2: (<i>left</i>) Pairwise win-rate comparison in terms of classification/regression accuracy/R<sup>2</sup>. (<i>right</i>) Total runtime vs performance. TabDPT models are ordered by context size.
+</span>
+</p>
+
+For full details, please see our paper [*TabDPT: An Open Tabular Foundation Model*](https://arxiv.org/abs/2410.18164).
+
 
 ## Citation
 ```
 @article{ma2024tabdpt,
-  title={TabDPT: Scaling Tabular Foundation Models},
-  author={Ma, Junwei and Thomas, Valentin and Hosseinzadeh, Rasa and Kamkari, Hamidreza and Labach, Alex and Cresswell, Jesse C and Golestan, Keyvan and Yu, Guangwei and Volkovs, Maksims and Caterini, Anthony L},
+  title={TabDPT: Scaling Tabular Foundation Models on Real Data},
+  author={Ma, Junwei and Thomas, Valentin and Hosseinzadeh, Rasa and Kamkari, Hamidreza and Labach, Alex and Cresswell, Jesse C and Golestan, Keyvan and Yu, Guangwei and Caterini, Anthony L and Volkovs, Maksims},
   journal={arXiv preprint arXiv:2410.18164},
   year={2024}
 }
 ```
-
-## Roadmap
-- [ ] Release other model sizes
-- [ ] Release training code
