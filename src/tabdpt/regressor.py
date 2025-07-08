@@ -77,15 +77,11 @@ class TabDPTRegressor(TabDPTEstimator, RegressorMixin):
             return torch.cat(pred_list).squeeze().detach().cpu().float().numpy()
 
     def _ensemble_predict(self, X: np.ndarray, n_ensembles: int = 8, context_size: int = 1024):
-        logits_cumsum = None
+        prediction_cumsum = 0
         for _ in tqdm(range(n_ensembles)):
             seed = int(np.random.SeedSequence().generate_state(1)[0])
-            logits = self.predict(X, context_size=context_size, seed=seed)
-            if logits_cumsum is None:
-                logits_cumsum = logits
-            else:
-                logits_cumsum += logits
-        return logits_cumsum / n_ensembles
+            prediction_cumsum += self.predict(X, context_size=context_size, seed=seed)
+        return prediction_cumsum / n_ensembles
 
     def predict(
         self,
