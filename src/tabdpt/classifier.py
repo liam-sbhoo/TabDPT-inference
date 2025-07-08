@@ -65,7 +65,7 @@ class TabDPTClassifier(TabDPTEstimator, ClassifierMixin):
         temperature: float = 0.8,
         context_size: int = 1024,
         return_logits: bool = False,
-        seed: int = None,
+        seed: int | None = None,
     ):
         train_x, train_y, test_x = self._prepare_prediction(X)
 
@@ -131,7 +131,7 @@ class TabDPTClassifier(TabDPTEstimator, ClassifierMixin):
         self, X, n_ensembles: int = 8, temperature: float = 0.8, context_size: int = 1024
     ):
         logits_cumsum = None
-        for i in tqdm(range(n_ensembles)):
+        for _ in tqdm(range(n_ensembles)):
             seed = int(np.random.SeedSequence().generate_state(1)[0])
             logits = self.predict_proba(X, context_size=context_size, return_logits=True, seed=seed)
             if logits_cumsum is None:
@@ -150,7 +150,7 @@ class TabDPTClassifier(TabDPTEstimator, ClassifierMixin):
         n_ensembles: int = 8,
         temperature: float = 0.8,
         context_size: int = 1024,
-        seed: int = None,
+        seed: int | None = None,
     ):
         if n_ensembles == 1:
             return self.predict_proba(
