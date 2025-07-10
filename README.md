@@ -9,7 +9,7 @@
 
 **TabDPT** is an open-source foundation model for tabular data based on in-context learning. It is trained on real-world data and can generalize to new tasks **without** additional training or hyperparameter tuning.
 
-This repository provides a lightweight interface to generate predictions on incoming tabular datasets. Full training code is available [here](TODO).
+This repository provides a lightweight interface to generate predictions on incoming tabular datasets. Full training code is available [here](https://github.com/layer6ai-labs/TabDPT-training/).
 
 ## Usage
 
