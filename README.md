@@ -26,7 +26,7 @@ pip install -e .
 
 ### Tips
 
-Using a `conda` env or the `uv` package manager is preferable to native python `virtualenv`s, which we have found is unstable for these requirements. 
+Using a `conda` env or the `uv` package manager is preferable to native python `virtualenv`, which we have found is unstable for these requirements. 
 
 For better performance, please adjust `context_size` or `n_ensembles` to trade off speed and accuracy.
 
