@@ -135,7 +135,7 @@ TabDPT uses retrieval and self-supervised learning to remove constraints on data
 		</tr>
 	</tbody>
 </table>
-<p align="center">
+<p>
 	Table 1: Model performance comparison on the standard <a href="https://new.openml.org/search?type=study&study_type=task&id=99">CC18</a> and <a href="https://www.openml.org/search?type=study&study_type=task&id=353">CTR23</a> benchmarks, with 95% confidence intervals. Tree-based method scores are obtained from <a href="https://arxiv.org/abs/2305.02997">McElfresh et al.</a>, wheresa MLP-PLR and TabR were obtained using the <a href="https://github.com/yandex-research/tabular-dl-tabr">official implementation</a>. TabPFN-v2 uses the vanilla setting with <code>SUBSAMPLE_SAMPLES = 10000</code> for inference. TabDPT uses a context size of 2048, and 8 ensemble members.
 </p>
 
@@ -161,7 +161,7 @@ Figure 2: (<i>left</i>) Pairwise win-rate comparison in terms of classification/
 </span>
 </p>
 
-For full details, please see our paper [*TabDPT: An Open Tabular Foundation Model*](https://arxiv.org/abs/2410.18164).
+For full details, please see our paper [*TabDPT: Scaling Tabular Foundation Models on Real Data*](https://arxiv.org/abs/2410.18164).
 
 
 ## Citation
