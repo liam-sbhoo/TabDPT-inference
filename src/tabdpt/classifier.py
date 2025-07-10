@@ -128,18 +128,24 @@ class TabDPTClassifier(TabDPTEstimator, ClassifierMixin):
         return pred_val
 
     def ensemble_predict_proba(
-        self, X, n_ensembles: int = 8, temperature: float = 0.8, context_size: int = 1024
+        self,
+        X,
+        n_ensembles: int = 8,
+        temperature: float = 0.8,
+        context_size: int = 1024,
+        seed: int | None = None,
     ):
-        logits_cumsum = None
-        for _ in tqdm(range(n_ensembles)):
-            seed = int(np.random.SeedSequence().generate_state(1)[0])
-            logits = self.predict_proba(X, context_size=context_size, return_logits=True, seed=seed)
-            if logits_cumsum is None:
-                logits_cumsum = logits
-            else:
-                logits_cumsum += logits
 
-        pred = (logits_cumsum / n_ensembles)[..., :self.num_classes] / temperature
+        prediction_cumsum = None
+        generator = np.random.SeedSequence(seed)
+        for _ in tqdm(range(n_ensembles)):
+            seed = int(generator.generate_state(1)[0])
+            pred = self.predict_proba(X, context_size=context_size, return_logits=True, seed=seed)
+            if prediction_cumsum is None:
+                prediction_cumsum = np.zeros_like(pred)
+            prediction_cumsum += pred
+
+        pred = (prediction_cumsum / n_ensembles)[..., :self.num_classes] / temperature
         pred = softmax(pred, axis=-1)
         pred /= pred.sum(axis=-1, keepdims=True)  # numerical stability
         return pred
@@ -162,4 +168,5 @@ class TabDPTClassifier(TabDPTEstimator, ClassifierMixin):
                 n_ensembles=n_ensembles,
                 temperature=temperature,
                 context_size=context_size,
+                seed=seed,
             ).argmax(axis=-1)
