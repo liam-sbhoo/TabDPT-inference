@@ -26,7 +26,7 @@ class TabDPTClassifier(TabDPTEstimator, ClassifierMixin):
             compile=compile,
         )
 
-    def fit(self, X, y):
+    def fit(self, X: np.ndarray, y: np.ndarray):
         super().fit(X, y)
         self.num_classes = len(np.unique(self.y_train))
         assert self.num_classes > 1, "Number of classes must be greater than 1"
