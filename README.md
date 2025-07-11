@@ -24,9 +24,21 @@ cd TabDPT
 pip install -e .
 ```
 
+You may also need a C++ compiler such as `g++` for building some dependencies. On Ubuntu, you can install it with
+```
+sudo apt-get update
+sudo apt-get install g++
+```
+
+Lastly, you will need a `python-dev` system package. To install `python3.11-dev` for instance, on Ubuntu, do the following:
+```
+sudo apt-get update
+sudo apt-get install python-dev
+```
+
 ### Tips
 
-Using a `conda` env or the `uv` package manager is preferable to native python `virtualenv`, which we have found is unstable for these requirements. 
+If you experience errors caused by `torch compile` (e.g., `InductorError`), try updating package versions and system drivers. 
 
 For better performance, please adjust `context_size` or `n_ensembles` to trade off speed and accuracy.
 
