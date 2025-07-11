@@ -73,6 +73,7 @@ class TabDPTEstimator(BaseEstimator):
         if self.n_features > self.max_features:
             train_x = (convert_to_torch_tensor(self.X_train).to(self.device).float(),)
             _, _, self.V = torch.pca_lowrank(train_x, q=self.max_features)
+
         self.is_fitted_ = True
         if self.compile:
             self.model = torch.compile(self.model)

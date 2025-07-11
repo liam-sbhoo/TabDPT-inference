@@ -135,12 +135,11 @@ class TabDPTClassifier(TabDPTEstimator, ClassifierMixin):
         context_size: int = 1024,
         seed: int | None = None,
     ):
-
         prediction_cumsum = None
         generator = np.random.SeedSequence(seed)
         for _ in tqdm(range(n_ensembles)):
-            seed = int(generator.generate_state(1)[0])
-            pred = self.predict_proba(X, context_size=context_size, return_logits=True, seed=seed)
+            inner_seed = int(generator.generate_state(1)[0])
+            pred = self.predict_proba(X, context_size=context_size, return_logits=True, seed=inner_seed)
             if prediction_cumsum is None:
                 prediction_cumsum = np.zeros_like(pred)
             prediction_cumsum += pred

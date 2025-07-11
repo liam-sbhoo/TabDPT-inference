@@ -77,8 +77,8 @@ class TabDPTRegressor(TabDPTEstimator, RegressorMixin):
         prediction_cumsum = 0
         generator = np.random.SeedSequence(seed)
         for _ in tqdm(range(n_ensembles)):
-            seed = int(generator.generate_state(1)[0])
-            prediction_cumsum += self._predict(X, context_size=context_size, seed=seed)
+            inner_seed = int(generator.generate_state(1)[0])
+            prediction_cumsum += self._predict(X, context_size=context_size, seed=inner_seed)
         return prediction_cumsum / n_ensembles
 
     def predict(
