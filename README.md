@@ -17,18 +17,34 @@ This repository provides a lightweight interface to generate predictions on inco
 
 TabDPT is available on [Hugging Face](https://huggingface.co/Layer6/TabDPT).
 
-To set up this repo,
+To set up this repo, first ensure you have `python >= 3.11`. Then, run the following:
 ```
 git clone git@github.com:layer6ai-labs/TabDPT.git
 cd TabDPT
 pip install -e .
 ```
 
+You may also need a C++ compiler such as `g++` for building some dependencies. On Ubuntu, you can install it with
+```
+sudo apt-get update
+sudo apt-get install g++
+```
+
+Lastly, you will need a `python-dev` system package. To install `python3.11-dev` for instance, on Ubuntu, do the following:
+```
+sudo apt-get update
+sudo apt-get install python-dev
+```
+
+### Tips
+
+If you experience errors caused by `torch compile` (e.g., `InductorError`), try updating package versions and system drivers. 
+
+For better performance, please adjust `context_size` or `n_ensembles` to trade off speed and accuracy.
+
 ### Worked Examples
 
 See `tests/cls_example.py` and `tests/reg_example.py` for examples of how to use TabDPT once installed.
-
-For better performance, please increase `context_size` or increase `n_ensembles` to trade off speed and accuracy.
 
 ## Overview
 
@@ -136,7 +152,7 @@ TabDPT uses retrieval and self-supervised learning to remove constraints on data
 	</tbody>
 </table>
 <p>
-	Table 1: Model performance comparison on the standard <a href="https://new.openml.org/search?type=study&study_type=task&id=99">CC18</a> and <a href="https://www.openml.org/search?type=study&study_type=task&id=353">CTR23</a> benchmarks, with 95% confidence intervals. Tree-based method scores are obtained from <a href="https://arxiv.org/abs/2305.02997">McElfresh et al.</a>, wheresa MLP-PLR and TabR were obtained using the <a href="https://github.com/yandex-research/tabular-dl-tabr">official implementation</a>. TabPFN-v2 uses the vanilla setting with <code>SUBSAMPLE_SAMPLES = 10000</code> for inference. TabDPT uses a context size of 2048, and 8 ensemble members.
+	<b>Table 1:</b> Model performance comparison on the standard <a href="https://new.openml.org/search?type=study&study_type=task&id=99">CC18</a> and <a href="https://www.openml.org/search?type=study&study_type=task&id=353">CTR23</a> benchmarks, with 95% confidence intervals. Tree-based method scores are obtained from <a href="https://arxiv.org/abs/2305.02997">McElfresh et al.</a>, wheresa MLP-PLR and TabR were obtained using the <a href="https://github.com/yandex-research/tabular-dl-tabr">official implementation</a>. TabPFN-v2 uses the vanilla setting with <code>SUBSAMPLE_SAMPLES = 10000</code> for inference. TabDPT uses a context size of 2048, and 8 ensemble members.
 </p>
 
 TabDPT is trained on real-world tabular data and we observe scaling laws similar to LLMs, opening the door to training Internet-scale tabular foundation models:
@@ -145,9 +161,9 @@ TabDPT is trained on real-world tabular data and we observe scaling laws similar
 <img
 src="figures/scaling.png" width="50%">
 <br />
-<span>
-Figure 1: Increasing model or pre-training data size (number of cells) leads to consistent improvements predictable by power laws (fitted solid lines).
-</span>
+<p>
+<b>Figure 1:</b> Increasing model or pre-training data size (number of cells) leads to consistent improvements predictable by power laws (fitted solid lines).
+</p>
 </p>
 
 TabDPT also stands out in head-to-head model comparisons and is much faster to use than other models in total time taken to generate a prediction:
@@ -156,9 +172,9 @@ TabDPT also stands out in head-to-head model comparisons and is much faster to u
 <img
 src="figures/performance-comparison.png" width="100%">
 <br />
-<span>
-Figure 2: (<i>left</i>) Pairwise win-rate comparison in terms of classification/regression accuracy/R<sup>2</sup>. (<i>right</i>) Total runtime vs performance. TabDPT models are ordered by context size.
-</span>
+<p>
+<b>Figure 2:</b> (<i>left</i>) Pairwise win-rate comparison in terms of classification/regression accuracy/R<sup>2</sup>. (<i>right</i>) Total runtime vs performance. TabDPT models are ordered by context size.
+</p>
 </p>
 
 For full details, please see our paper [*TabDPT: Scaling Tabular Foundation Models on Real Data*](https://arxiv.org/abs/2410.18164).
