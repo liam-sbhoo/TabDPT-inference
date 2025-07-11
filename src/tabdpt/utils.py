@@ -67,16 +67,6 @@ def clip_outliers(data, eval_pos=-1, n_sigma=4, dim=0):
     return torch.clip(data, mean - cutoff, mean + cutoff)
 
 
-def seed_everything(seed: int):
-    random.seed(seed)
-    os.environ["PYTHONHASHSEED"] = str(seed)
-    np.random.seed(seed)
-    torch.manual_seed(seed)
-    torch.cuda.manual_seed(seed)
-    torch.backends.cudnn.deterministic = True
-    torch.backends.cudnn.benchmark = True
-
-
 def convert_to_torch_tensor(input):
     if isinstance(input, np.ndarray):
         return torch.from_numpy(input)

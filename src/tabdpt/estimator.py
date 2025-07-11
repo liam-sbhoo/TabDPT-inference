@@ -54,7 +54,7 @@ class TabDPTEstimator(BaseEstimator):
         self.compile = compile
         assert self.mode in ["cls", "reg"], "mode must be 'cls' or 'reg'"
 
-    def fit(self, X, y):
+    def fit(self, X: np.ndarray, y: np.ndarray):
         assert isinstance(X, np.ndarray), "X must be a numpy array"
         assert isinstance(y, np.ndarray), "y must be a numpy array"
         assert X.shape[0] == y.shape[0], "X and y must have the same number of samples"
@@ -70,6 +70,10 @@ class TabDPTEstimator(BaseEstimator):
         self.n_instances, self.n_features = X.shape
         self.X_train = X
         self.y_train = y
+        if self.n_features > self.max_features:
+            train_x = convert_to_torch_tensor(self.X_train).to(self.device).float()
+            _, _, self.V = torch.pca_lowrank(train_x, q=min(train_x.shape[0], self.max_features))
+
         self.is_fitted_ = True
         if self.compile:
             self.model = torch.compile(self.model)
@@ -86,7 +90,6 @@ class TabDPTEstimator(BaseEstimator):
 
         # Apply PCA optionally to reduce the number of features
         if self.n_features > self.max_features:
-            _, _, self.V = torch.pca_lowrank(train_x, q=self.max_features)
             train_x = train_x @ self.V
             test_x = test_x @ self.V
         return train_x, train_y, test_x
