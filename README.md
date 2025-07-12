@@ -7,9 +7,9 @@
 
 </div>
 
-**TabDPT** is an open-source foundation model for tabular data based on in-context learning. It is trained on real-world data and can generalize to new tasks **without** additional training or hyperparameter tuning.
+**TabDPT** is an open-source foundation model for tabular data based on in-context learning (ICL). It is trained on real-world data and can generalize to new tasks **without** additional training or hyperparameter tuning.
 
-This repository provides a lightweight interface to generate predictions on incoming tabular datasets. Full training code is available [here](https://github.com/layer6ai-labs/TabDPT-training/).
+This repository provides a lightweight interface to generate predictions on new tabular datasets. Full training code is available [here](https://github.com/layer6ai-labs/TabDPT-training/).
 
 ## Usage
 
@@ -24,13 +24,13 @@ cd TabDPT
 pip install -e .
 ```
 
-You may also need a C++ compiler such as `g++` for building some dependencies. On Ubuntu, you can install it with
+You may also need a C++ compiler such as `g++` for building some dependencies. On Ubuntu, you can install it with:
 ```
 sudo apt-get update
 sudo apt-get install g++
 ```
 
-Lastly, you will need a `python-dev` system package. To install `python3.11-dev` for instance, on Ubuntu, do the following:
+Lastly, you will need a `python-dev` system package. On Ubuntu, it can be installed with:
 ```
 sudo apt-get update
 sudo apt-get install python-dev
@@ -40,15 +40,15 @@ sudo apt-get install python-dev
 
 If you experience errors caused by `torch compile` (e.g., `InductorError`), try updating package versions and system drivers. 
 
-For better performance, please adjust `context_size` or `n_ensembles` to trade off speed and accuracy.
+For better runtime performance, adjust `context_size` or `n_ensembles` to trade off speed and accuracy.
 
-### Worked Examples
+### Working Examples
 
 See `tests/cls_example.py` and `tests/reg_example.py` for examples of how to use TabDPT once installed.
 
 ## Overview
 
-TabDPT uses retrieval and self-supervised learning to remove constraints on dataset size and to enable effective generalization from training on real data. We find this to be competitive with existing ICL training approaches, and outperform other deep learning and tree-based models:
+TabDPT uses retrieval and self-supervised learning to remove constraints on dataset size and to enable effective generalization from pre-training on real data. We find this to be competitive with existing ICL training approaches, and outperform leading deep learning and tree-based models:
 
 <table align="center">
 	<colgroup>
@@ -93,6 +93,7 @@ TabDPT uses retrieval and self-supervised learning to remove constraints on data
 			<td>0.917 <sub><sup>[0.911, 0.921]</sup></sub></td>
 			<td>0.841 <sub><sup>[0.831, 0.848]</sup></sub></td>
 		</tr>
+		<!---
 		<tr class="even">
 			<td style="text-align: center;">TabPFN (kNN)</td>
 			<td>0.959 <sub><sup>[0.956, 0.962]</sup></sub></td>
@@ -100,6 +101,7 @@ TabDPT uses retrieval and self-supervised learning to remove constraints on data
 			<td style="text-align: center;">N/A</td>
 			<td style="text-align: center;">N/A</td>
 		</tr>
+		--->
 		<tr class="odd">
 			<td style="text-align: center;">TabPFN</td>
 			<td>0.939 <sub><sup>[0.935, 0.943]</sup></sub></td>
@@ -152,10 +154,10 @@ TabDPT uses retrieval and self-supervised learning to remove constraints on data
 	</tbody>
 </table>
 <p>
-	<b>Table 1:</b> Model performance comparison on the standard <a href="https://new.openml.org/search?type=study&study_type=task&id=99">CC18</a> and <a href="https://www.openml.org/search?type=study&study_type=task&id=353">CTR23</a> benchmarks, with 95% confidence intervals. Tree-based method scores are obtained from <a href="https://arxiv.org/abs/2305.02997">McElfresh et al.</a>, wheresa MLP-PLR and TabR were obtained using the <a href="https://github.com/yandex-research/tabular-dl-tabr">official implementation</a>. TabPFN-v2 uses the vanilla setting with <code>SUBSAMPLE_SAMPLES = 10000</code> for inference. TabDPT uses a context size of 2048, and 8 ensemble members.
+	<b>Table 1:</b> Model performance comparison on the <a href="https://new.openml.org/search?type=study&study_type=task&id=99">CC18</a> and <a href="https://www.openml.org/search?type=study&study_type=task&id=353">CTR23</a> benchmarks, with 95% confidence intervals. Tree-based models are taken from <a href="https://arxiv.org/abs/2305.02997">McElfresh et al.</a>, MLP-PLR and TabR are taken from the <a href="https://github.com/yandex-research/tabular-dl-tabr">official implementation</a>. TabPFN-v2 was run with the default setting <code>SUBSAMPLE_SAMPLES = 10000</code> for inference. TabDPT has context size 2048 and ensemble size 8.
 </p>
 
-TabDPT is trained on real-world tabular data and we observe scaling laws similar to LLMs, opening the door to training Internet-scale tabular foundation models:
+TabDPT is trained on real-world tabular data and we observe scaling laws similar to LLMs opening the door to training Internet-scale tabular foundation models:
 
 <p align="center">
 <img
@@ -166,7 +168,7 @@ src="figures/scaling.png" width="50%">
 </p>
 </p>
 
-TabDPT also stands out in head-to-head model comparisons and is much faster to use than other models in total time taken to generate a prediction:
+TabDPT also stands out in head-to-head model comparisons and is significantly faster than other models in total time taken to generate a prediction:
 
 <p align="center">
 <img
