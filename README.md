@@ -9,7 +9,7 @@
 
 **TabDPT** is an open-source foundation model for tabular data based on in-context learning (ICL). It is trained on real-world data and can generalize to new tasks **without** additional training or hyperparameter tuning.
 
-This repository provides a lightweight interface to generate predictions on new tabular datasets. Full training code is available [here](https://github.com/layer6ai-labs/TabDPT-training/).
+This repository provides lightweight interface code to generate predictions on new tabular datasets. Full training code is available [here](https://github.com/layer6ai-labs/TabDPT-training/).
 
 ## Usage
 
@@ -24,7 +24,7 @@ cd TabDPT
 pip install -e .
 ```
 
-You may also need a C++ compiler such as `g++` for building some dependencies. On Ubuntu, you can install it with:
+You may also need a C++ compiler such as `g++` for building dependencies. On Ubuntu, you can install it with:
 ```
 sudo apt-get update
 sudo apt-get install g++
