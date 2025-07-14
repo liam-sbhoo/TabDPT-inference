@@ -73,21 +73,21 @@ TabDPT uses retrieval and self-supervised learning to remove constraints on data
 	</thead>
 	<tbody>
 		<tr class="odd">
-			<td style="text-align: center;"><strong>TabDPT v1.1</strong></td>
+			<td style="text-align: center;"><strong>TabDPT v1.1 (Ours)</strong></td>
 			<td><strong>0.976 <sub><sup>[0.974, 0.978]</sup></sub></strong></td>
 			<td><strong>0.928 <sub><sup>[0.926, 0.931]</sup></sub></strong></td>
 			<td><strong>0.920 <sub><sup>[0.918, 0.922]</sup></sub></strong></td>
 			<td><strong>0.847 <sub><sup>[0.843, 0.851]</sup></sub></strong></td>
 		</tr>
 		<tr class="even">
-			<td style="text-align: center;">TabDPT v1.0</td>
+			<td style="text-align: center;">TabDPT v1.0 (Ours)</td>
 			<td>0.972 <sub><sup>[0.971, 0.973]</sup></sub></td>
 			<td>0.917 <sub><sup>[0.915, 0.919]</sup></sub></td>
 			<td>0.911 <sub><sup>[0.908, 0.913]</sup></sub></td>
 			<td>0.831 <sub><sup>[0.826, 0.835]</sup></sub></td>
 		</tr>
 		<tr class="odd">
-			<td style="text-align: center;">TabPFN v2</td>
+			<td style="text-align: center;"><a href="https://www.nature.com/articles/s41586-024-08328-6">TabPFN v2</a></td>
 			<td>0.972 <sub><sup>[0.970, 0.974]</sup></sub></td>
 			<td>0.917 <sub><sup>[0.915, 0.919]</sup></sub></td>
 			<td>0.917 <sub><sup>[0.911, 0.921]</sup></sub></td>
@@ -95,7 +95,7 @@ TabDPT uses retrieval and self-supervised learning to remove constraints on data
 		</tr>
 		<!---
 		<tr class="even">
-			<td style="text-align: center;">TabPFN (kNN)</td>
+			<td style="text-align: center;"><a href="https://arxiv.org/abs/2406.05207">TabPFN (kNN)</a></td>
 			<td>0.959 <sub><sup>[0.956, 0.962]</sup></sub></td>
 			<td>0.884 <sub><sup>[0.881, 0.887]</sup></sub></td>
 			<td style="text-align: center;">N/A</td>
@@ -103,21 +103,21 @@ TabDPT uses retrieval and self-supervised learning to remove constraints on data
 		</tr>
 		--->
 		<tr class="odd">
-			<td style="text-align: center;">TabPFN</td>
+			<td style="text-align: center;"><a href="https://arxiv.org/abs/2207.01848">TabPFN</a></td>
 			<td>0.939 <sub><sup>[0.935, 0.943]</sup></sub></td>
 			<td>0.852 <sub><sup>[0.849, 0.856]</sup></sub></td>
 			<td style="text-align: center;">N/A</td>
 			<td style="text-align: center;">N/A</td>
 		</tr>
 		<tr class="even">
-			<td style="text-align: center;">TabR</td>
+			<td style="text-align: center;"><a href="https://arxiv.org/abs/2307.14338">TabR</a></td>
 			<td>0.967 <sub><sup>[0.965, 0.969]</sup></sub></td>
 			<td>0.923 <sub><sup>[0.920, 0.926]</sup></sub></td>
 			<td>0.909 <sub><sup>[0.905, 0.912]</sup></sub></td>
 			<td>0.825 <sub><sup>[0.817, 0.831]</sup></sub></td>
 		</tr>
 		<tr class="odd">
-			<td style="text-align: center;">MLP-PLR</td>
+			<td style="text-align: center;"><a href="https://arxiv.org/abs/2203.05556">MLP-PLR</a></td>
 			<td>0.967 <sub><sup>[0.965, 0.968]</sup></sub></td>
 			<td>0.914 <sub><sup>[0.911, 0.917]</sup></sub></td>
 			<td>0.907 <sub><sup>[0.904, 0.910]</sup></sub></td>
@@ -131,21 +131,21 @@ TabDPT uses retrieval and self-supervised learning to remove constraints on data
 			<td style="text-align: center;">N/A</td>
 		</tr>
 		<tr class="odd">
-			<td style="text-align: center;">XGBoost</td>
+			<td style="text-align: center;"><a href="https://arxiv.org/abs/1603.02754">XGBoost</a></td>
 			<td>0.965 <sub><sup>[0.963, 0.967]</sup></sub></td>
 			<td>0.910 <sub><sup>[0.906, 0.913]</sup></sub></td>
 			<td>0.904 <sub><sup>[0.900, 0.907]</sup></sub></td>
 			<td>0.820 <sub><sup>[0.814, 0.825]</sup></sub></td>
 		</tr>
 		<tr class="even">
-			<td style="text-align: center;">LightGBM</td>
+			<td style="text-align: center;"><a href="https://github.com/microsoft/LightGBM">LightGBM</a></td>
 			<td>0.964 <sub><sup>[0.962, 0.967]</sup></sub></td>
 			<td>0.906 <sub><sup>[0.902, 0.909]</sup></sub></td>
 			<td>0.900 <sub><sup>[0.896, 0.904]</sup></sub></td>
 			<td>0.809 <sub><sup>[0.803, 0.815]</sup></sub></td>
 		</tr>
 		<tr class="odd">
-			<td style="text-align: center;">CatBoost</td>
+			<td style="text-align: center;"><a href="https://arxiv.org/abs/1810.11363">CatBoost</a></td>
 			<td>0.964 <sub><sup>[0.962, 0.967]</sup></sub></td>
 			<td>0.908 <sub><sup>[0.905, 0.910]</sup></sub></td>
 			<td>0.897 <sub><sup>[0.890, 0.903]</sup></sub></td>
