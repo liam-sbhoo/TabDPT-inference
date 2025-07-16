@@ -70,6 +70,7 @@ class TabDPTClassifier(TabDPTEstimator, ClassifierMixin):
         train_x, train_y, test_x = self._prepare_prediction(X)
 
         if seed is not None:
+            self.faiss_knn.index.seed = seed
             feat_perm = generate_random_permutation(train_x.shape[1], seed)
             train_x = train_x[:, feat_perm]
             test_x = test_x[:, feat_perm]
@@ -137,9 +138,11 @@ class TabDPTClassifier(TabDPTEstimator, ClassifierMixin):
     ):
         prediction_cumsum = None
         generator = np.random.SeedSequence(seed)
-        for _ in tqdm(range(n_ensembles)):
-            inner_seed = int(generator.generate_state(1)[0])
-            pred = self.predict_proba(X, context_size=context_size, return_logits=True, seed=inner_seed)
+        for _, inner_seed in tqdm(zip(range(n_ensembles), generator.generate_state(n_ensembles))):
+            inner_seed = int(inner_seed)
+            pred = self.predict_proba(
+                X, context_size=context_size, return_logits=True, seed=inner_seed
+            )
             if prediction_cumsum is None:
                 prediction_cumsum = np.zeros_like(pred)
             prediction_cumsum += pred
