@@ -18,6 +18,7 @@ from .utils import FAISS, convert_to_torch_tensor
 # Constants for model caching and download
 _VERSION = "1_1"
 _MODEL_NAME = f"tabdpt{_VERSION}.safetensors"
+CPU_INF_BATCH = 16
 
 
 class TabDPTEstimator(BaseEstimator):
@@ -30,9 +31,9 @@ class TabDPTEstimator(BaseEstimator):
         compile: bool = True,
     ):
         self.mode = mode
-        self.inf_batch_size = inf_batch_size
         self.device = device or ("cuda" if torch.cuda.is_available() else "cpu")
-        self.use_flash = use_flash
+        self.inf_batch_size = inf_batch_size if self.device == "cuda" else min(inf_batch_size, CPU_INF_BATCH)
+        self.use_flash = use_flash and self.device == "cuda"
 
         self.path = hf_hub_download(
             repo_id="Layer6/TabDPT",
@@ -46,12 +47,12 @@ class TabDPTEstimator(BaseEstimator):
             model_state = {k: f.get_tensor(k) for k in f.keys()}
 
         cfg.env.device = self.device
-        self.model = TabDPTModel.load(model_state=model_state, config=cfg, use_flash=use_flash)
+        self.model = TabDPTModel.load(model_state=model_state, config=cfg, use_flash=self.use_flash)
         self.model.eval()
 
         self.max_features = self.model.num_features
         self.max_num_classes = self.model.n_out
-        self.compile = compile
+        self.compile = compile and self.device == "cuda"
         assert self.mode in ["cls", "reg"], "mode must be 'cls' or 'reg'"
 
     def fit(self, X: np.ndarray, y: np.ndarray):
