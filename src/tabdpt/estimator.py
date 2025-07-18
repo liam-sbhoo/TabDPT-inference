@@ -18,6 +18,7 @@ from .utils import FAISS, convert_to_torch_tensor
 # Constants for model caching and download
 _VERSION = "1_1"
 _MODEL_NAME = f"tabdpt{_VERSION}.safetensors"
+CPU_INF_BATCH = 16
 
 
 class TabDPTEstimator(BaseEstimator):
@@ -31,7 +32,7 @@ class TabDPTEstimator(BaseEstimator):
     ):
         self.mode = mode
         self.device = device or ("cuda" if torch.cuda.is_available() else "cpu")
-        self.inf_batch_size = inf_batch_size if self.device == "cuda" else min(inf_batch_size, 16)
+        self.inf_batch_size = inf_batch_size if self.device == "cuda" else min(inf_batch_size, CPU_INF_BATCH)
         self.use_flash = use_flash and self.device == "cuda"
 
         self.path = hf_hub_download(
