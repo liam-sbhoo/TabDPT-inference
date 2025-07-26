@@ -13,7 +13,7 @@ dependencies = [
     "numpy",
     "omegaconf==2.3.0",
     "safetensors>=0.5.3",
-    "scikit-learn==1.7.0",
+    "scikit-learn",
     "scipy==1.15.3",
     "torch==2.7.1",
     "tqdm==4.67.1",
