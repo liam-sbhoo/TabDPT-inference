@@ -1,5 +1,4 @@
 import math
-
 import numpy as np
 import torch
 from sklearn.base import RegressorMixin
@@ -16,6 +15,7 @@ class TabDPTRegressor(TabDPTEstimator, RegressorMixin):
         device: str = None,
         use_flash: bool = True,
         compile: bool = True,
+        model_path: str = None,
     ):
         super().__init__(
             mode="reg",
@@ -23,6 +23,7 @@ class TabDPTRegressor(TabDPTEstimator, RegressorMixin):
             device=device,
             use_flash=use_flash,
             compile=compile,
+            model_path=model_path,
         )
 
     @torch.no_grad()

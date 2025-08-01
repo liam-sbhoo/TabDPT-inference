@@ -29,16 +29,20 @@ class TabDPTEstimator(BaseEstimator):
         device: str = None,
         use_flash: bool = True,
         compile: bool = True,
+        model_path: str = None,
     ):
         self.mode = mode
         self.device = device or ("cuda" if torch.cuda.is_available() else "cpu")
         self.inf_batch_size = inf_batch_size if self.device == "cuda" else min(inf_batch_size, CPU_INF_BATCH)
         self.use_flash = use_flash and self.device == "cuda"
 
-        self.path = hf_hub_download(
-            repo_id="Layer6/TabDPT",
-            filename=_MODEL_NAME,
-        )
+        if model_path is None:
+            self.path = hf_hub_download(
+                repo_id="Layer6/TabDPT",
+                filename=_MODEL_NAME,
+            )
+        else:
+            self.path = model_path
 
         with safe_open(self.path, framework="pt", device=self.device) as f:
             meta = f.metadata()
